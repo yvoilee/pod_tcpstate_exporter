@@ -6,7 +6,8 @@ Specify namespaces that collect pod tcp  metrics under
 ```yaml
           env:
             - name: NAMESPACES
-              # namespaces, split ,
+              # namespaces, split ,support all
+              # value: all
               value: daily,tag
 ```
 

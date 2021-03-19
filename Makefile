@@ -3,7 +3,7 @@ PLATFORM     ?= linux
 LDFLAGS      ?= -w -s
 REGISTER     ?= yvoilee/pod_tcpstate_exporter
 NAME          = pod_tcpstate_exporter
-VERSION      ?= 0.0.2
+VERSION      ?= 0.0.3
 
 # go
 GOPATH       := $(shell go env GOPATH)

@@ -17,10 +17,11 @@ spec:
       hostPID: true
       containers:
         - name: pod-tcpstate-exporter
-          image: yvoilee/pod_tcpstate_exporter:0.0.2
+          image: yvoilee/pod_tcpstate_exporter:0.0.3
           env:
             - name: NAMESPACES
-              # namespaces, split ,
+              # namespaces, split ,support all
+              # value: all
               value: daily,tag
           ports:
             - containerPort: 8080
@@ -32,6 +33,11 @@ spec:
           hostPath:
             path: /var/run/docker.sock
             type: Socket
+      tolerations:
+        - effect: NoExecute
+          operator: Exists
+        - effect: NoSchedule
+          operator: Exists
 ---
 apiVersion: v1
 kind: Service

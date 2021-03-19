@@ -112,7 +112,8 @@ func (cli *ClientWithCache) ListPodSandboxes(ctx context.Context, namespaces map
 			return nil, err
 		}
 		_, ok := namespaces[sandbox.Namespace]
-		if isSandbox && ok {
+		_, all := namespaces["all"]
+		if isSandbox && (all || ok) {
 			sandboxes = append(sandboxes, sandbox)
 		}
 	}
