@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: pod-tcpstate-exporter
+  namespace: monitoring
+  labels:
+    app: pod-tcpstate-exporter
+spec:
+  selector:
+    matchLabels:
+      app: pod-tcpstate-exporter
+  template:
+    metadata:
+      labels:
+        app: pod-tcpstate-exporter
+    spec:
+      hostPID: true
+      containers:
+        - name: pod-tcpstate-exporter
+          image: yvoilee/pod_tcpstate_exporter:0.0.2
+          env:
+            - name: NAMESPACES
+              # namespaces, split ,
+              value: daily,tag
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - mountPath: /var/run/docker.sock
+              name: docker-sock
+      volumes:
+        - name: docker-sock
+          hostPath:
+            path: /var/run/docker.sock
+            type: Socket
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: pod-tcpstate-exporter
+  name: pod-tcpstate-exporter
+  namespace: monitoring
+spec:
+  type: ClusterIP
+  selector:
+    app: pod-tcpstate-exporter
+  ports:
+    - name: http-metrics
+      port: 8080
+      protocol: TCP
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: pod-tcpstate-exporter
+  name: pod-tcpstate-exporter
+  namespace: kube-system
+spec:
+  endpoints:
+    - interval: 15s
+      port: http-metrics
+      scheme: http
+  jobLabel: pod-tcpstate-exporter
+  namespaceSelector:
+    matchNames:
+      - monitoring
+  selector:
+    matchLabels:
+      app: pod-tcpstate-exporter
